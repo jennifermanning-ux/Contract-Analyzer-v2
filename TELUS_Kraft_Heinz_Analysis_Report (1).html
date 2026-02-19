@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TELUS Contract Analysis Report - Kraft Heinz Company Split</title>
+    <style>
+        :root {
+            --telus-purple: #4B286D;
+            --telus-green: #66CC00;
+            --telus-dark-green: #2B8000;
+            --telus-light-purple: #F2EFF6;
+            --telus-gray: #71747A;
+            --telus-light-gray: #F7F7F8;
+            --telus-white: #FFFFFF;
+            --telus-red: #C12335;
+            --telus-orange: #FACA69;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--telus-light-gray);
+            color: #2A2C2E;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--telus-purple) 0%, #6B3E8C 100%);
+            color: var(--telus-white);
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(102, 204, 0, 0.1);
+            border-radius: 50%;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .telus-logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .telus-logo span {
+            color: var(--telus-green);
+        }
+        
+        .report-title {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .report-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+        
+        .status-banner {
+            background: var(--telus-white);
+            border-left: 5px solid var(--telus-green);
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .status-banner.success {
+            border-left-color: var(--telus-dark-green);
+        }
+        
+        .status-banner h3 {
+            color: var(--telus-dark-green);
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-banner p {
+            color: var(--telus-gray);
+            font-size: 14px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--telus-white);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: var(--telus-light-purple);
+            padding: 18px 22px;
+            border-bottom: 1px solid #E8E4ED;
+        }
+        
+        .card-header h2 {
+            font-size: 16px;
+            color: var(--telus-purple);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header .icon {
+            width: 24px;
+            height: 24px;
+            background: var(--telus-purple);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .card-body {
+            padding: 22px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: var(--telus-gray);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 13px;
+            color: #2A2C2E;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .info-value.mismatch {
+            color: var(--telus-red);
+        }
+        
+        .info-value.aligned {
+            color: var(--telus-dark-green);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-high {
+            background: #FDE8EA;
+            color: var(--telus-red);
+        }
+        
+        .badge-medium {
+            background: #FFF4E0;
+            color: #B78103;
+        }
+        
+        .badge-low {
+            background: #E8F5E9;
+            color: var(--telus-dark-green);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .line-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .line-items-table th {
+            background: var(--telus-light-purple);
+            color: var(--telus-purple);
+            font-weight: 600;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 2px solid var(--telus-purple);
+        }
+        
+        .line-items-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .line-items-table tr:hover {
+            background: #FAFAFA;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: var(--telus-purple);
+        }
+        
+        .executive-summary {
+            background: var(--telus-white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        
+        .executive-summary h2 {
+            color: var(--telus-purple);
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--telus-green);
+        }
+        
+        .exec-paragraph {
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .exec-paragraph:last-child {
+            margin-bottom: 0;
+        }
+        
+        .success-section {
+            background: #E8F5E9;
+            border: 1px solid #A5D6A7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .success-section h4 {
+            color: var(--telus-dark-green);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .risk-list {
+            list-style: none;
+        }
+        
+        .risk-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .risk-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--telus-dark-green);
+        }
+        
+        .footer {
+            background: var(--telus-purple);
+            color: var(--telus-white);
+            padding: 25px 40px;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .footer-logo span {
+            color: var(--telus-green);
+        }
+        
+        .clause-box {
+            background: #FAFAFA;
+            border-left: 3px solid var(--telus-green);
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .clause-box .source {
+            display: block;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #999;
+            font-style: normal;
+        }
+        
+        .milestone-box {
+            background: #F5F5F5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .milestone-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #E0E0E0;
+        }
+        
+        .milestone-item:last-child {
+            border-bottom: none;
+        }
+        
+        .timeline-bar {
+            background: linear-gradient(to right, var(--telus-purple) 0%, var(--telus-green) 100%);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            top: -6px;
+            width: 20px;
+            height: 20px;
+            background: var(--telus-purple);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        @media print {
+            .card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="telus-logo">TELUS <span>AGRICULTURE & CONSUMER GOODS</span></div>
+            <h1 class="report-title">Contract Analysis Report</h1>
+            <p class="report-subtitle">Multi-Stakeholder Contract Analysis | Version 4.2 | February 18, 2026</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Success Banner -->
+        <div class="status-banner success">
+            <h3>✓ Entity Alignment Verified - No Risk Flags</h3>
+            <p>The contracting entity "TELUS Agriculture & Consumer Goods (US) Inc." aligns with current TAC Contracting Entity Guidance. All entities and jurisdictions are properly aligned.</p>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="executive-summary">
+            <h2>📋 Executive Summary</h2>
+            <p class="exec-paragraph"><strong>Deal Overview:</strong> This Order Form and Statement of Work outlines a professional services engagement for The Kraft Heinz Food Company to manage the splitting of their existing TPM Enterprise instance into two new entities: Global Taste Elevation Co. (GTE) and North American Grocery Co. (NAG). The project is scheduled to commence on February 16, 2026, with a targeted Go-Live date of July 13, 2026, followed by four weeks of Hypercare ending August 10, 2026.</p>
+            
+            <p class="exec-paragraph"><strong>Financial Mechanics:</strong> The total contract value is a Fixed Fee of $575,000.00 USD, exclusive of taxes. Billing is tied to three milestones: Contract Execution ($191,666.67), Completion of Test Environment Creation ($191,666.67), and Go Live ($191,666.66). Payment terms are Net 30 days. Any resource usage exceeding the allocated weekly percentages (25% for PM, 50% for Consultant/Engineer) will be billed on a Time and Materials basis at $275.00 per hour.</p>
+            
+            <p class="exec-paragraph"><strong>Delivery and Risk:</strong> The scope involves creating two new environments for NAG while retaining GTE on the existing instance. TELUS is responsible for environment setup, interface cloning, and testing support, while data conversion, training, and code updates are explicitly out of scope. Operational risk is mitigated by strict dependency clauses; Customer delays exceeding 10 days trigger a penalty of $2,000 USD per resource per day.</p>
+            
+            <p class="exec-paragraph"><strong>Strategic Verdict:</strong> The agreement is governed by a 2014 Master Services Agreement. The entities are aligned with TELUS Agriculture & Consumer Goods (US) Inc. contracting with a US-based customer entity. There are no significant cross-border or regulatory red flags detected in the provided text. The deal represents a standard professional services enhancement for an existing enterprise customer.</p>
+        </div>
+
+        <div class="grid">
+            <!-- Document Validity -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📄</span> Document Execution & Validity</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Document Type</span>
+                        <span class="info-value">Order Form & SOW</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Execution Status</span>
+                        <span class="info-value aligned">Signed</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Effective Date</span>
+                        <span class="info-value">December 31, 2025</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Project Start</span>
+                        <span class="info-value">February 16, 2026</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Go-Live Date</span>
+                        <span class="info-value">July 13, 2026</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Hypercare End</span>
+                        <span class="info-value">August 10, 2026</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Master Agreement</span>
+                        <span class="info-value">January 20, 2014</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Alignment -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🏢</span> Entity & Jurisdictional Alignment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Line of Business</span>
+                        <span class="info-value">Consumer Goods</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">TELUS Entity</span>
+                        <span class="info-value aligned">TELUS Agriculture & Consumer Goods (US) Inc.</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer Entity</span>
+                        <span class="info-value">The Kraft Heinz Food Company</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer Location</span>
+                        <span class="info-value">Pennsylvania</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Alignment Status</span>
+                        <span class="info-value aligned">✓ ALIGNED</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Risk Flags</span>
+                        <span class="info-value aligned">None</span>
+                    </div>
+                    <div class="success-section">
+                        <h4>Entity Verification</h4>
+                        <ul class="risk-list">
+                            <li>TELUS entity matches Consumer Goods US guidance</li>
+                            <li>No cross-border complexities</li>
+                            <li>Standard domestic US transaction</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">💰</span> Financial Summary</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Total Contract Value</span>
+                        <span class="info-value price">$575,000.00</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Pricing Model</span>
+                        <span class="info-value">Fixed Fee</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Payment Terms</span>
+                        <span class="info-value">Net 30</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Out-of-Scope Rate</span>
+                        <span class="info-value">$275.00/hour</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tax Treatment</span>
+                        <span class="info-value">Exclusive of taxes</span>
+                    </div>
+                    
+                    <div class="milestone-box">
+                        <h4 style="color: var(--telus-purple); font-size: 13px; margin-bottom: 10px;">Milestone Payments</h4>
+                        <div class="milestone-item">
+                            <span>Contract Execution</span>
+                            <span class="price">$191,666.67</span>
+                        </div>
+                        <div class="milestone-item">
+                            <span>Test Environment Complete</span>
+                            <span class="price">$191,666.67</span>
+                        </div>
+                        <div class="milestone-item">
+                            <span>Go Live</span>
+                            <span class="price">$191,666.66</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Timeline -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📅</span> Project Timeline</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Kick Off</span>
+                        <span class="info-value">February 16, 2026</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Environment Creation</span>
+                        <span class="info-value">Milestone 2</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">SIT Completion</span>
+                        <span class="info-value">Before Go-Live</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">UAT Completion</span>
+                        <span class="info-value">Before Go-Live</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Go Live</span>
+                        <span class="info-value">July 13, 2026</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Hypercare</span>
+                        <span class="info-value">4 weeks post Go-Live</span>
+                    </div>
+                    <div class="timeline-bar">
+                        <div class="timeline-marker" style="left: 0%;"></div>
+                        <div class="timeline-marker" style="left: 50%;"></div>
+                        <div class="timeline-marker" style="left: 100%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #666;">
+                        <span>Kick Off<br>Feb 16</span>
+                        <span>Go Live<br>Jul 13</span>
+                        <span>Hypercare End<br>Aug 10</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scope of Work -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🎯</span> Scope of Work</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Project Type</span>
+                        <span class="info-value">Company Split</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">New Entities</span>
+                        <span class="info-value">GTE & NAG</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">New Environments</span>
+                        <span class="info-value">2 (NAG US & NAG Ingredients)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Training</span>
+                        <span class="info-value mismatch">Out of Scope</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Data Conversion</span>
+                        <span class="info-value mismatch">Out of Scope</span>
+                    </div>
+                    <div class="clause-box">
+                        "Customer is an existing TELUS TPM Enterprise customer splitting out their current company into two new companies, Global Taste Elevation Co. and North American Grocery Co."
+                        <span class="source">Source: SOW Section 1.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">⚠</span> Risk Assessment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">System Readiness Risk</span>
+                        <span class="info-value"><span class="badge badge-low">LOW</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Renewal Risk Level</span>
+                        <span class="info-value"><span class="badge badge-low">LOW</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sanctions Involved</span>
+                        <span class="info-value aligned">No</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Multi-Country/Cross-Border</span>
+                        <span class="info-value aligned">No</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Active Risk Flags</span>
+                        <span class="info-value aligned">None</span>
+                    </div>
+                    
+                    <div class="success-section">
+                        <h4>Risk Mitigation</h4>
+                        <ul class="risk-list">
+                            <li>Fixed fee structure limits cost overruns</li>
+                            <li>Milestone-based payments reduce exposure</li>
+                            <li>Customer delay penalties ($2,000/day/resource)</li>
+                            <li>Clear scope boundaries defined</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resource Allocation -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">👥</span> Resource Allocation & Assumptions</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">TELUS Resources (Weekly Allocation)</h4>
+                        <table class="line-items-table">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Allocation</th>
+                                    <th>Overage Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Project Manager</td>
+                                    <td>25%</td>
+                                    <td>$275/hour</td>
+                                </tr>
+                                <tr>
+                                    <td>Business Consultant</td>
+                                    <td>50%</td>
+                                    <td>$275/hour</td>
+                                </tr>
+                                <tr>
+                                    <td>Developer/Engineer</td>
+                                    <td>50%</td>
+                                    <td>$275/hour</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Customer Responsibilities</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Provide SKU breakouts for NAG</li>
+                            <li style="color: #333;">Deliver interface files</li>
+                            <li style="color: #333;">Complete UAT within 10 days of notice</li>
+                            <li style="color: #333;">Manage user maintenance and training</li>
+                            <li style="color: #333;">Sign-off on deliverables</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clause-box" style="margin-top: 20px;">
+                    "Any time above this per week will be billed at Time and Materials at $275.00 per hour"
+                    <span class="source">Source: SOW Section 1.0, Resource Assumptions</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Out of Scope -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">🚫</span> Explicitly Out of Scope</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <ul class="risk-list">
+                            <li style="color: #C12335;"><strong>Training:</strong> TELUS is not responsible for training. Separate SOW required if needed.</li>
+                            <li style="color: #C12335;"><strong>Data Conversion:</strong> Customer responsible for data conversion activities.</li>
+                            <li style="color: #C12335;"><strong>Code Updates:</strong> Any code changes beyond interface cloning.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul class="risk-list">
+                            <li style="color: #C12335;"><strong>Additional Environments:</strong> Beyond the 2 NAG environments specified.</li>
+                            <li style="color: #C12335;"><strong>Interface Changes:</strong> New interface development (only cloning included).</li>
+                            <li style="color: #C12335;"><strong>Weekend/Holiday Work:</strong> Standard business hours only (9am-6pm EST).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signatories -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">✍️</span> Signatory Information</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">TELUS Agriculture & Consumer Goods (US) Inc.</h4>
+                        <div class="info-row" style="padding: 8px 0;">
+                            <span class="info-label">Signatory</span>
+                            <span class="info-value">Beth Gillis</span>
+                        </div>
+                        <div class="info-row" style="padding: 8px 0;">
+                            <span class="info-label">Date</span>
+                            <span class="info-value">January 1, 2026</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">The Kraft Heinz Food Company</h4>
+                        <div class="info-row" style="padding: 8px 0;">
+                            <span class="info-label">Signatory</span>
+                            <span class="info-value">Gary Kraversky</span>
+                        </div>
+                        <div class="info-row" style="padding: 8px 0;">
+                            <span class="info-label">Date</span>
+                            <span class="info-value">January 2, 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">TELUS <span>AGRICULTURE & CONSUMER GOODS</span></div>
+            <div>Confidential - Internal Use Only | Contract Analysis v4.2</div>
+        </div>
+    </footer>
+</body>
+</html>
