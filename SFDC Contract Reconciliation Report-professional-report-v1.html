@@ -1,0 +1,1005 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SFDC Contract Reconciliation Report - CW2671094</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .header-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .meta-item {
+            font-size: 14px;
+        }
+        
+        .meta-item strong {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 600;
+        }
+        
+        .executive-summary {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-critical {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .status-high {
+            background: #fff7ed;
+            color: #ea580c;
+            border: 1px solid #fed7aa;
+        }
+        
+        .status-medium {
+            background: #fefce8;
+            color: #ca8a04;
+            border: 1px solid #fde047;
+        }
+        
+        .status-low {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .status-match {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .status-mismatch {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .alert-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-critical {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .alert-high {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-left: 4px solid #ea580c;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .alert-critical .alert-title {
+            color: #dc2626;
+        }
+        
+        .alert-high .alert-title {
+            color: #ea580c;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        th {
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e5e7eb;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+        
+        tr:hover {
+            background: #f8fafc;
+        }
+        
+        .field-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 10px 0;
+        }
+        
+        .field-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .field-box label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .field-box .value {
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+        
+        .field-box.contract {
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .field-box.sfdc {
+            border-left: 3px solid #8b5cf6;
+        }
+        
+        .recommendation {
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+            margin-top: 15px;
+        }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        .evidence-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 13px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .evidence-box label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .evidence-box .clause {
+            font-style: italic;
+            color: #475569;
+            margin-bottom: 8px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 2px solid #cbd5e1;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .info-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .info-card h4 {
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #64748b;
+            font-size: 13px;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 13px;
+        }
+        
+        .action-list {
+            list-style: none;
+        }
+        
+        .action-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .action-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .action-number {
+            background: #3b82f6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .action-content {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+        
+        .summary-card .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+        
+        .summary-card .label {
+            font-size: 13px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .risk-flag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 4px;
+        }
+        
+        .risk-critical {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .risk-high {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            .content {
+                box-shadow: none;
+            }
+        }
+    </style>
+
+    <script>
+      
+      const files = {
+        
+      }
+    
+
+
+      window.fs = {}
+      window.fs.readFile = (fileName) => {
+        // return array buffer
+        return new Promise((resolve) => {
+          const content = files[fileName]
+          const decoded = atob(content)
+          const arr = new Uint8Array(decoded.length)
+          for (let i = 0; i < decoded.length; i++) {
+            arr[i] = decoded.charCodeAt(i)
+          }
+          resolve(arr)
+        })
+      }
+
+      // stub out window.user.get, window.db.get and window.db.set so that it works when you download the html doc
+      window.db = {}
+      window.db.get = (key) => {
+        // use localStorage to store the artifact
+        const value = localStorage.getItem(key)
+        if (value) {
+          return JSON.parse(value)
+        }
+
+        return null
+      }
+
+      window.db.set = (key, value) => {
+        // use localStorage to store the artifact
+        localStorage.setItem(key, JSON.stringify(value))
+      }
+
+      window.user = {}
+      window.user.get = () => {
+        return {
+          userId: "user-id-placeholder",
+          email: "placeholder@test.com"
+        }
+      }
+
+    </script>
+    </head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SFDC Contract Reconciliation Report</h1>
+            <div class="subtitle">Contract-to-System Data Validation Analysis</div>
+            
+            <div class="header-meta">
+                <div class="meta-item">
+                    <strong>Contract Number</strong>
+                    CW2671094
+                </div>
+                <div class="meta-item">
+                    <strong>TAC Opportunity UID</strong>
+                    TACOPP-000046439
+                </div>
+                <div class="meta-item">
+                    <strong>Analysis Date</strong>
+                    February 19, 2026
+                </div>
+                <div class="meta-item">
+                    <strong>Report Version</strong>
+                    v1.1
+                </div>
+                <div class="meta-item">
+                    <strong>Overall Status</strong>
+                    <span class="status-badge status-critical">Low Readiness</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2 class="section-title">Executive Summary</h2>
+                <div class="executive-summary">
+                    <p style="margin-bottom: 15px;">
+                        This report presents the reconciliation analysis between the authoritative Contract JSON (v4.2) and Salesforce (SFDC) opportunity data for <strong>NESTRADE S.A.</strong> (TAC UID: TACOPP-000046439). The contract represents a 1-year SaaS license agreement effective January 1, 2026, with a Total Contract Value of approximately <strong>$3.9M USD</strong>.
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        <strong>Critical Finding:</strong> The analysis identified significant discrepancies requiring immediate attention before proceeding to invoicing. The contract contains <strong>High Risk flags</strong> for entity misalignment and cross-border contracting that require Tax and Legal engagement. Additionally, the SFDC opportunity contains data mismatches that must be resolved to ensure accurate billing and revenue recognition.
+                    </p>
+                    <p>
+                        <strong>Recommendation:</strong> Do not proceed with invoicing until all Critical and High severity discrepancies are resolved and Tax/Legal have reviewed the entity structure and withholding tax implications.
+                    </p>
+                </div>
+                
+                <div class="summary-grid" style="margin-top: 30px;">
+                    <div class="summary-card">
+                        <div class="number">3</div>
+                        <div class="label">Critical Issues</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="number">4</div>
+                        <div class="label">High Priority Issues</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="number">4</div>
+                        <div class="label">Medium Priority Issues</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="number">1</div>
+                        <div class="label">Low Priority Issues</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Critical Alerts -->
+            <div class="section">
+                <h2 class="section-title">Critical Alerts</h2>
+                
+                <div class="alert-box alert-critical">
+                    <div class="alert-title">
+                        <span>🚨</span> Entity Misalignment & Cross-Border Risk
+                    </div>
+                    <p style="margin-bottom: 10px;">
+                        The contract flags indicate <strong>"Entity Misalignment – High Risk"</strong> and <strong>"Cross-border/Cross-selling/Multi-country – High Risk"</strong>. The contract is structured with TELUS Agriculture and Consumer Goods (US) Inc. contracting with NESTRADE S.A. (Switzerland), which may not align with entity guidance.
+                    </p>
+                    <div class="recommendation">
+                        <div class="recommendation-title">Required Action</div>
+                        Engage Tax and Legal teams immediately to validate the cross-border contracting structure and determine if TELUS Agriculture & Consumer Goods (UK) Limited should be the contracting entity.
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-critical">
+                    <div class="alert-title">
+                        <span>🚨</span> Withholding Tax Risk
+                    </div>
+                    <p style="margin-bottom: 10px;">
+                        The contract includes software licensing to entities in <strong>Bulgaria, Italy, Poland, Portugal, Romania, and Slovakia</strong>, triggering withholding tax obligations in these jurisdictions.
+                    </p>
+                    <div class="recommendation">
+                        <div class="recommendation-title">Required Action</div>
+                        Contact Tax team immediately to review withholding tax implications and ensure proper tax treatment before invoicing.
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-high">
+                    <div class="alert-title">
+                        <span>⚠️</span> Missing TAC Contracting Entity in SFDC
+                    </div>
+                    <p style="margin-bottom: 10px;">
+                        The SFDC opportunity is missing the "Legal Entity that owns IP and Revenue" field, which should contain "TELUS Agriculture and Consumer Goods (US) Inc." per the contract.
+                    </p>
+                    <div class="recommendation">
+                        <div class="recommendation-title">Required Action</div>
+                        Populate SFDC field "Legal Entity that owns IP and Revenue" with "TELUS Agriculture and Consumer Goods (US) Inc."
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Header Level Reconciliation -->
+            <div class="section">
+                <h2 class="section-title">Header-Level Reconciliation</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Contract Value</th>
+                            <th>SFDC Value</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Effective Date</strong></td>
+                            <td>01-January-2026</td>
+                            <td>1/1/2026</td>
+                            <td><span class="status-badge status-match">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>End Date</strong></td>
+                            <td>31-December-2026</td>
+                            <td>Not Found</td>
+                            <td><span class="status-badge status-medium">Missing</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contract Term</strong></td>
+                            <td>1 year</td>
+                            <td>12 months</td>
+                            <td><span class="status-badge status-match">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Contract Value</strong></td>
+                            <td>USD 3,933,518</td>
+                            <td>3,933,518.00</td>
+                            <td><span class="status-badge status-match">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Auto-Renewal</strong></td>
+                            <td>Yes (2 years unless 90 days notice)</td>
+                            <td>0 (False)</td>
+                            <td><span class="status-badge status-mismatch">Mismatch</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer Entity</strong></td>
+                            <td>NESTRADE S.A.</td>
+                            <td>Nestle SA</td>
+                            <td><span class="status-badge status-mismatch">Mismatch</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer Jurisdiction</strong></td>
+                            <td>Switzerland</td>
+                            <td>Switzerland</td>
+                            <td><span class="status-badge status-match">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>TAC Contracting Entity</strong></td>
+                            <td>TELUS Agriculture and Consumer Goods (US) Inc.</td>
+                            <td>Not Found</td>
+                            <td><span class="status-badge status-mismatch">Missing</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Billing Frequency</strong></td>
+                            <td>Annual upfront</td>
+                            <td>Not Found</td>
+                            <td><span class="status-badge status-mismatch">Missing</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>PO Number</strong></td>
+                            <td>Required on invoice</td>
+                            <td>Not Found (despite requirement flag)</td>
+                            <td><span class="status-badge status-mismatch">Missing</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Line Item Reconciliation -->
+            <div class="section">
+                <h2 class="section-title">Line Item Reconciliation</h2>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: #fff7ed; border-radius: 6px; border-left: 3px solid #ea580c;">
+                    <strong>Note:</strong> The contract contains 8 line items, but only 1 line item was found in SFDC. The SFDC line item appears to aggregate multiple contract items.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Contract Details</th>
+                            <th>SFDC Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Primary License</strong><br>
+                                <span style="font-size: 12px; color: #64748b;">SKU: TCG-00000000000044</span>
+                            </td>
+                            <td>
+                                <strong>TELUS RE/DSD Console User, Mobile, Field Manager User</strong><br>
+                                Qty: 17,073 | Unit Price: USD 17.16<br>
+                                TCV: USD 3,515,672
+                            </td>
+                            <td>
+                                <strong>TELUS RE Enterprise - Licenses FF</strong><br>
+                                Qty: Not Found | Unit Price: Not Found<br>
+                                TCV: 3,933,518.00
+                            </td>
+                            <td><span class="status-badge status-mismatch">Mismatch</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Support</strong><br>
+                                <span style="font-size: 12px; color: #64748b;">Existing Customizations</span>
+                            </td>
+                            <td>
+                                Support for existing Customizations<br>
+                                Qty: 1 | TCV: $417,846
+                            </td>
+                            <td>Not Found (may be included in main line)</td>
+                            <td><span class="status-badge status-medium">Missing</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Access</strong><br>
+                                <span style="font-size: 12px; color: #64748b;">Preproduction</span>
+                            </td>
+                            <td>TELUS RE/DSD Preproduction access (Included)</td>
+                            <td>Not Found</td>
+                            <td><span class="status-badge status-low">Missing</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Access</strong><br>
+                                <span style="font-size: 12px; color: #64748b;">Production</span>
+                            </td>
+                            <td>TELUS RE/DSD Production access (Included)</td>
+                            <td>Not Found</td>
+                            <td><span class="status-badge status-low">Missing</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Variable Services</strong><br>
+                                <span style="font-size: 12px; color: #64748b;">Support, Test Sites, Tickets, Storage</span>
+                            </td>
+                            <td>
+                                - Support for Customizations (18% of customizations)<br>
+                                - Additional test site ($500/month)<br>
+                                - Ticket management ($31.25 per 15min)<br>
+                                - Data Storage ($16 per 10GB)
+                            </td>
+                            <td>Not Found</td>
+                            <td><span class="status-badge status-low">Missing</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Detailed Discrepancies -->
+            <div class="section">
+                <h2 class="section-title">Detailed Discrepancy Register</h2>
+                
+                <h3 style="color: #dc2626; margin-bottom: 15px; font-size: 16px;">🔴 Critical Severity</h3>
+                <table style="margin-bottom: 30px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Category / Field</th>
+                            <th style="width: 35%;">Issue</th>
+                            <th style="width: 40%;">Recommended Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Entity</strong><br>TAC Contracting Entity</td>
+                            <td>
+                                SFDC missing "Legal Entity that owns IP and Revenue"<br>
+                                <span style="color: #dc2626;">Contract: TELUS Agriculture and Consumer Goods (US) Inc.</span>
+                            </td>
+                            <td>Update SFDC field immediately. Engage Tax and Legal per contract risk flags for entity validation.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Entity</strong><br>Entity Alignment</td>
+                            <td>
+                                Contract flags "Entity Misalignment – High Risk" and "Cross-border – High Risk"<br>
+                                <span style="color: #dc2626;">US entity contracting with Swiss entity against guidance</span>
+                            </td>
+                            <td>CRITICAL: Engage Tax and Legal to validate cross-border contracting structure. Verify if UK entity should be contracting.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tax</strong><br>Withholding Tax</td>
+                            <td>
+                                Withholding Tax Risk flagged for EU sites<br>
+                                <span style="color: #dc2626;">Bulgaria, Italy, Poland, Portugal, Romania, Slovakia</span>
+                            </td>
+                            <td>CRITICAL: Contact Tax team immediately to review withholding tax implications for all 6 jurisdictions before invoicing.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="color: #ea580c; margin-bottom: 15px; font-size: 16px;">🟠 High Severity</h3>
+                <table style="margin-bottom: 30px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Category / Field</th>
+                            <th style="width: 35%;">Issue</th>
+                            <th style="width: 40%;">Recommended Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Term/Renewal</strong><br>Auto-Renewal</td>
+                            <td>
+                                Contract: Yes (2 years unless 90 days notice)<br>
+                                <span style="color: #ea580c;">SFDC: 0 (False)</span>
+                            </td>
+                            <td>Update SFDC "Auto-Renew" field from 0 to 1 (True) to match contract auto-renewal clause.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Entity</strong><br>Customer Entity</td>
+                            <td>
+                                Contract: NESTRADE S.A.<br>
+                                <span style="color: #ea580c;">SFDC: Nestle SA</span>
+                            </td>
+                            <td>Update SFDC Account Name to reflect correct legal contracting entity "NESTRADE S.A."</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Billing</strong><br>Billing Frequency</td>
+                            <td>
+                                Contract: Annual upfront<br>
+                                <span style="color: #ea580c;">SFDC: "Std. Billing Frequency" is empty</span>
+                            </td>
+                            <td>Populate SFDC "Std. Billing Frequency" field with "Annual" to match contract.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Billing</strong><br>PO Number</td>
+                            <td>
+                                Contract requires PO on invoice<br>
+                                <span style="color: #ea580c;">SFDC "PO Number" is empty despite requirement flag</span>
+                            </td>
+                            <td>Obtain PO Number from customer and populate SFDC before invoicing.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Recommended Actions -->
+            <div class="section">
+                <h2 class="section-title">Recommended Next Actions</h2>
+                
+                <ol class="action-list">
+                    <li>
+                        <span class="action-number">1</span>
+                        <div class="action-content">
+                            <div class="action-title">Engage Tax Team (URGENT)</div>
+                            <div class="action-desc">Review withholding tax implications for Bulgaria, Italy, Poland, Portugal, Romania, and Slovakia. Ensure proper tax treatment is in place before invoicing.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">2</span>
+                        <div class="action-content">
+                            <div class="action-title">Engage Legal Team (URGENT)</div>
+                            <div class="action-desc">Validate cross-border contracting structure (US-Switzerland) per contract risk flags. Determine if UK entity should be contracting for European scope.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">3</span>
+                        <div class="action-content">
+                            <div class="action-title">Update Auto-Renewal Setting</div>
+                            <div class="action-desc">Change SFDC "Auto-Renew" field from 0 to 1 to match contract auto-renewal clause for 2-year renewal period.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">4</span>
+                        <div class="action-content">
+                            <div class="action-title">Correct Customer Entity Name</div>
+                            <div class="action-desc">Update SFDC Account Name from "Nestle SA" to "NESTRADE S.A." to reflect the correct legal contracting entity.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">5</span>
+                        <div class="action-content">
+                            <div class="action-title">Populate TAC Contracting Entity</div>
+                            <div class="action-desc">Add "TELUS Agriculture and Consumer Goods (US) Inc." to SFDC "Legal Entity that owns IP and Revenue" field.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">6</span>
+                        <div class="action-content">
+                            <div class="action-title">Obtain and Enter PO Number</div>
+                            <div class="action-desc">Contact customer to obtain Purchase Order number and populate SFDC "PO Number" field before invoicing.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">7</span>
+                        <div class="action-content">
+                            <div class="action-title">Add Contract End Date</div>
+                            <div class="action-desc">Populate SFDC with End Date of 12/31/2026 to match contract expiration date.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">8</span>
+                        <div class="action-content">
+                            <div class="action-title">Update Line Item Quantity</div>
+                            <div class="action-desc">Set line item quantity to 17,073 in SFDC to match contract license count.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="action-number">9</span>
+                        <div class="action-content">
+                            <div class="action-title">Review Product Catalog Mapping</div>
+                            <div class="action-desc">Align SFDC product "TELUS RE Enterprise - Licenses FF" with contract product "TELUS RE/DSD Console User, Mobile, Field Manager User".</div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+            
+            <!-- Contract Risk Flags -->
+            <div class="section">
+                <h2 class="section-title">Contract Risk Flags</h2>
+                <p style="margin-bottom: 15px;">The following risk flags were identified in the Contract JSON and require stakeholder attention:</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <span class="risk-flag risk-critical">⚠️ Entity Misalignment – High Risk – Engage Tax and Legal</span>
+                    <span class="risk-flag risk-critical">⚠️ Cross-border/Cross-selling/Multi-country – High Risk – Engage Tax and Legal</span>
+                    <span class="risk-flag risk-high">⚠️ Withholding Tax Risk – Contact Tax</span>
+                </div>
+                
+                <div class="evidence-box">
+                    <label>Contract Evidence - Affected Sites</label>
+                    <div class="clause">
+                        "TELUS licenses the following Software to the Customer... Site Name... Nestlé Bulgaria... Nestlé Italy... Nestlé Poland NHS... Nestlé Portugal... Nestlé Romania Purina... AFS Visicom [Slovakia]"
+                    </div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                        Source: Annex 1
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Quality Summary -->
+            <div class="section">
+                <h2 class="section-title">Data Quality Summary</h2>
+                
+                <div class="two-column">
+                    <div class="info-card">
+                        <h4>Missing in SFDC</h4>
+                        <div class="info-row">
+                            <span class="info-label">Legal Entity that owns IP and Revenue</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Std. Billing Frequency</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">PO Number</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">End Date</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Line Item Quantity</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Governing Law</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4>Mismatched Values</h4>
+                        <div class="info-row">
+                            <span class="info-label">Auto-Renewal</span>
+                            <span class="info-value">Contract: Yes / SFDC: No</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Customer Entity</span>
+                            <span class="info-value">Contract: NESTRADE S.A. / SFDC: Nestle SA</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Product Name</span>
+                            <span class="info-value">Different naming conventions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>This report was generated by the SFDC Reconciliation Copilot (v1.1) on February 19, 2026.</p>
+                <p style="margin-top: 5px;">
+                    <strong>Inputs Analyzed:</strong> Contract JSON v4.2 | SFDC CSV #1 (Header) | SFDC CSV #2 (Line Items)<br>
+                    <strong>Join Key Used:</strong> TAC Unique Identifier (TACOPP-000046439)
+                </p>
+                <p style="margin-top: 10px; font-size: 11px; color: #94a3b8;">
+                    This report is for Revenue Operations use only. Critical and High severity items require resolution before proceeding to invoicing.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
