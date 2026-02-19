@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TELUS Contract Analysis Report - Tom's of Maine TABS SOW</title>
+    <style>
+        :root {
+            --telus-purple: #4B286D;
+            --telus-green: #66CC00;
+            --telus-dark-green: #2B8000;
+            --telus-light-purple: #F2EFF6;
+            --telus-gray: #71747A;
+            --telus-light-gray: #F7F7F8;
+            --telus-white: #FFFFFF;
+            --telus-red: #C12335;
+            --telus-orange: #FACA69;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--telus-light-gray);
+            color: #2A2C2E;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--telus-purple) 0%, #6B3E8C 100%);
+            color: var(--telus-white);
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(102, 204, 0, 0.1);
+            border-radius: 50%;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .telus-logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .telus-logo span {
+            color: var(--telus-green);
+        }
+        
+        .report-title {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .report-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+        
+        .status-banner {
+            background: var(--telus-white);
+            border-left: 5px solid var(--telus-red);
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .status-banner.high-risk {
+            border-left-color: var(--telus-red);
+        }
+        
+        .status-banner.warning {
+            border-left-color: #FF9800;
+        }
+        
+        .status-banner h3 {
+            color: var(--telus-red);
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-banner.warning h3 {
+            color: #E65100;
+        }
+        
+        .status-banner p {
+            color: var(--telus-gray);
+            font-size: 14px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--telus-white);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: var(--telus-light-purple);
+            padding: 18px 22px;
+            border-bottom: 1px solid #E8E4ED;
+        }
+        
+        .card-header h2 {
+            font-size: 16px;
+            color: var(--telus-purple);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header .icon {
+            width: 24px;
+            height: 24px;
+            background: var(--telus-purple);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .card-body {
+            padding: 22px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: var(--telus-gray);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 13px;
+            color: #2A2C2E;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .info-value.mismatch {
+            color: var(--telus-red);
+        }
+        
+        .info-value.aligned {
+            color: var(--telus-dark-green);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-high {
+            background: #FDE8EA;
+            color: var(--telus-red);
+        }
+        
+        .badge-medium {
+            background: #FFF4E0;
+            color: #B78103;
+        }
+        
+        .badge-low {
+            background: #E8F5E9;
+            color: var(--telus-dark-green);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .line-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .line-items-table th {
+            background: var(--telus-light-purple);
+            color: var(--telus-purple);
+            font-weight: 600;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 2px solid var(--telus-purple);
+        }
+        
+        .line-items-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .line-items-table tr:hover {
+            background: #FAFAFA;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: var(--telus-purple);
+        }
+        
+        .executive-summary {
+            background: var(--telus-white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        
+        .executive-summary h2 {
+            color: var(--telus-purple);
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--telus-green);
+        }
+        
+        .exec-paragraph {
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .exec-paragraph:last-child {
+            margin-bottom: 0;
+        }
+        
+        .risk-section {
+            background: #FDE8EA;
+            border: 1px solid #F5C6CB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .risk-section h4 {
+            color: var(--telus-red);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .risk-list {
+            list-style: none;
+        }
+        
+        .risk-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .risk-list li::before {
+            content: '⚠';
+            position: absolute;
+            left: 0;
+            color: var(--telus-red);
+        }
+        
+        .footer {
+            background: var(--telus-purple);
+            color: var(--telus-white);
+            padding: 25px 40px;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .footer-logo span {
+            color: var(--telus-green);
+        }
+        
+        .clause-box {
+            background: #FAFAFA;
+            border-left: 3px solid var(--telus-green);
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .clause-box .source {
+            display: block;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #999;
+            font-style: normal;
+        }
+        
+        .amendment-notice {
+            background: #E3F2FD;
+            border-left: 5px solid #2196F3;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .amendment-notice h4 {
+            color: #1565C0;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .amendment-notice p {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .unsigned-notice {
+            background: #FFF3E0;
+            border-left: 5px solid #FF9800;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .unsigned-notice h4 {
+            color: #E65100;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .unsigned-notice p {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        @media print {
+            .card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="telus-logo">TELUS <span>AGRICULTURE & CONSUMER GOODS</span></div>
+            <h1 class="report-title">Contract Analysis Report</h1>
+            <p class="report-subtitle">Multi-Stakeholder Contract Analysis | Version 4.2 | February 18, 2026</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Unsigned Notice -->
+        <div class="unsigned-notice">
+            <h4>⚠ Execution Version - Unsigned Document</h4>
+            <p>This document is an <strong>Execution Version</strong> of the Statement of Work. No signature blocks are present in the provided text. The document references a Master Services Agreement dated August 14, 2015.</p>
+        </div>
+
+        <!-- Risk Alert Banner -->
+        <div class="status-banner high-risk">
+            <h3>⚠ HIGH PRIORITY: Entity Misalignment Detected</h3>
+            <p>The contracting entity "TABS Group, Inc." does not align with current TAC Contracting Entity Guidance for US Consumer Goods transactions. Tax and Legal engagement is required for entity alignment review.</p>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="executive-summary">
+            <h2>📋 Executive Summary</h2>
+            <p class="exec-paragraph"><strong>Deal Overview:</strong> This Statement of Work between Tom's of Maine, Inc. and TABS Group, Inc. outlines a 6-month engagement for in-house analytic support services, effective September 14, 2015. The agreement is governed by an underlying Master Services Agreement dated August 14, 2015. The primary scope involves refreshing POS reports, providing strategic recommendations, and delivering ad hoc sales analysis for the Customer and Shopper Marketing Team.</p>
+            
+            <p class="exec-paragraph"><strong>Financial Mechanics:</strong> The commercial model is a fixed monthly fee of $5,000 for a six-month test period, totaling $30,000 in committed revenue. Additional office days beyond the two included per month are billable at $500 per day. Travel expenses are treated as pass-through costs, reimbursable by the customer subject to Colgate-Palmolive's Travel and Expense Policy.</p>
+            
+            <p class="exec-paragraph"><strong>Delivery and Risk:</strong> Delivery relies on a named Key Personnel resource, Daniel Kresina, who will provide on-site support every other week and remote support of 30-40 hours per month. A critical risk flag exists regarding entity alignment; the contracting entity 'TABS Group, Inc.' does not match the standard TAC entity guidance for Consumer Goods (USA), necessitating Tax and Legal review. No cross-border complexities were detected as both parties appear to be US-based.</p>
+            
+            <p class="exec-paragraph"><strong>Strategic Verdict:</strong> The agreement represents a short-term tactical engagement with clear deliverables and ownership rights assigned to the customer. While the financial value is low, the 'test' nature of the term suggests potential for future expansion if the analytic support proves valuable. Immediate action is required to validate the contracting entity alignment to ensure compliance with corporate structure.</p>
+        </div>
+
+        <div class="grid">
+            <!-- Document Validity -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📄</span> Document Execution & Validity</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Document Type</span>
+                        <span class="info-value">Statement of Work (SOW)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Execution Status</span>
+                        <span class="info-value mismatch">Unsigned (Execution Version)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Effective Date</span>
+                        <span class="info-value">September 14, 2015</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">End Date</span>
+                        <span class="info-value">March 14, 2016</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Term</span>
+                        <span class="info-value">6 months</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Signature Blocks</span>
+                        <span class="info-value mismatch">Not Present</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Master Agreement</span>
+                        <span class="info-value">August 14, 2015</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Alignment -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🏢</span> Entity & Jurisdictional Alignment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Line of Business</span>
+                        <span class="info-value">Consumer Goods</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Contracting Entity (Current)</span>
+                        <span class="info-value">TABS Group, Inc.</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Expected TAC Entity</span>
+                        <span class="info-value">TELUS Agriculture & Consumer Goods (US) Inc.</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer Entity</span>
+                        <span class="info-value">Tom's of Maine, Inc.</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer Jurisdiction</span>
+                        <span class="info-value">United States</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Alignment Status</span>
+                        <span class="info-value mismatch">⚠ MISMATCH</span>
+                    </div>
+                    <div class="clause-box">
+                        "Master Services Agreement between Tom's of Maine, Inc. ("Tom's") and TABS Group, Inc. ("Supplier" or "TABS")"
+                        <span class="source">Source: Preamble</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">💰</span> Financial Summary</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Total Contract Value</span>
+                        <span class="info-value price">$30,000</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monthly Fee</span>
+                        <span class="info-value price">$5,000</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Test Period</span>
+                        <span class="info-value">6 months</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Additional Office Day</span>
+                        <span class="info-value">$500/day</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Travel Expenses</span>
+                        <span class="info-value">Pass-through (at cost)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Wind-down Cap</span>
+                        <span class="info-value">10% of 30-day fees</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Terms -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📅</span> Billing & Payment Terms</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Billing Frequency</span>
+                        <span class="info-value">Monthly</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Base Monthly Amount</span>
+                        <span class="info-value price">$5,000</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Included Office Days</span>
+                        <span class="info-value">2 per month</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Travel Reimbursement</span>
+                        <span class="info-value">Per Colgate-Palmolive Policy</span>
+                    </div>
+                    <div class="clause-box">
+                        "Tom's will cover all travel expenses for travel to Tom's customers if such travel is requested by Tom's... provided that all travel expenses must be in accordance with the Colgate-Palmolive Company Travel and Expense Policy."
+                        <span class="source">Source: Section 5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Services -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🔧</span> Professional Services</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Key Personnel</span>
+                        <span class="info-value">Daniel Kresina</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">On-site Schedule</span>
+                        <span class="info-value">Every other week</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Remote Support</span>
+                        <span class="info-value">30-40 hours/month</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Training Cost</span>
+                        <span class="info-value aligned">Supplier's cost (replacement training)</span>
+                    </div>
+                    <div class="clause-box">
+                        "Daniel Kresina or other TABS consultant will be in Tom's office at least every other week... TABS will provide additional 30 to 40 hours a month support required to complete responsibilities remotely."
+                        <span class="source">Source: Section 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">⚠</span> Risk Assessment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">System Readiness Risk</span>
+                        <span class="info-value"><span class="badge badge-high">HIGH</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Renewal Risk Level</span>
+                        <span class="info-value"><span class="badge badge-low">LOW</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sanctions Involved</span>
+                        <span class="info-value aligned">No</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Multi-Country/Cross-Border</span>
+                        <span class="info-value aligned">No</span>
+                    </div>
+                    
+                    <div class="risk-section">
+                        <h4>Active Risk Flags</h4>
+                        <ul class="risk-list">
+                            <li>Entity Misalignment – High Risk – Engage Tax and Legal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">📊</span> Line Items & SKU Mapping</h2>
+            </div>
+            <div class="card-body">
+                <table class="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>Product/Service</th>
+                            <th>Quantity/Details</th>
+                            <th>Unit Price</th>
+                            <th>Total Value</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>In-house Analytic Support</strong><br><small>6-month test period</small></td>
+                            <td>6 months</td>
+                            <td>$5,000/month</td>
+                            <td class="price">$30,000</td>
+                            <td>Net Revenue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Additional Office Days</strong><br><small>Beyond 2 included per month</small></td>
+                            <td>As requested</td>
+                            <td>$500/day</td>
+                            <td>Variable</td>
+                            <td>Net Revenue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Travel Expenses</strong><br><small>To Tom's customers (if requested)</small></td>
+                            <td>As incurred</td>
+                            <td>At cost</td>
+                            <td>Variable</td>
+                            <td>Pass-Through Cost</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scope of Services -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">🎯</span> Scope of Services</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Core Deliverables</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Download Syndicated and Account POS reports</li>
+                            <li style="color: #333;">Refresh existing 12-15 Customer and Shopper Marketing Team reports</li>
+                            <li style="color: #333;">Provide recommendations for report consolidation</li>
+                            <li style="color: #333;">Deliver ad hoc sales and marketing analysis</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Analysis Types</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Category Trends analysis</li>
+                            <li style="color: #333;">Source of Growth analysis</li>
+                            <li style="color: #333;">Customer business reviews</li>
+                            <li style="color: #333;">Strategic recommendations</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clause-box" style="margin-top: 20px;">
+                    "Provide In-house analytic support for Customer and Shopper Marketing Team"
+                    <span class="source">Source: Section 2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Rights -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">🔒</span> Data Rights & Ownership</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Deliverables Ownership</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Tom's shall own all rights in the Deliverables</li>
+                            <li style="color: #333;">Supplier shall assign all rights to Tom's</li>
+                            <li style="color: #333;">Supplier Pre-Existing Materials: Not applicable</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Termination Costs</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Wind-down costs capped at 10% of next 30 days fees</li>
+                            <li style="color: #333;">Applies to convenience termination per Section 3.2(b)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clause-box" style="margin-top: 20px;">
+                    "Tom's shall own and Supplier shall assign all rights in the Deliverables provided that, pursuant to Section 7.3 of the Agreement, Supplier shall retain ownership of the following Supplier Pre-Existing Materials: Not applicable"
+                    <span class="source">Source: Section 8</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Required Actions -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">✓</span> Required Actions</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Immediate Actions</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Verify TABS Group, Inc. entity status with Tax/Legal</li>
+                            <li style="color: #333;">Locate Master Services Agreement dated August 14, 2015</li>
+                            <li style="color: #333;">Obtain signed version of this SOW if executed</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Operational Notes</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Tom's to provide workstation and internet access for consultant</li>
+                            <li style="color: #333;">Matt Smith and Heather McCarthy to direct priorities</li>
+                            <li style="color: #333;">Monitor for expansion opportunity post 6-month test</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">TELUS <span>AGRICULTURE & CONSUMER GOODS</span></div>
+            <div>Confidential - Internal Use Only | Contract Analysis v4.2</div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TELUS Contract Analysis Report - BASF Amendment</title>
+    <style>
+        :root {
+            --telus-purple: #4B286D;
+            --telus-green: #66CC00;
+            --telus-dark-green: #2B8000;
+            --telus-light-purple: #F2EFF6;
+            --telus-gray: #71747A;
+            --telus-light-gray: #F7F7F8;
+            --telus-white: #FFFFFF;
+            --telus-red: #C12335;
+            --telus-orange: #FACA69;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--telus-light-gray);
+            color: #2A2C2E;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--telus-purple) 0%, #6B3E8C 100%);
+            color: var(--telus-white);
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(102, 204, 0, 0.1);
+            border-radius: 50%;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .telus-logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .telus-logo span {
+            color: var(--telus-green);
+        }
+        
+        .report-title {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .report-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+        
+        .status-banner {
+            background: var(--telus-white);
+            border-left: 5px solid var(--telus-red);
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .status-banner.high-risk {
+            border-left-color: var(--telus-red);
+        }
+        
+        .status-banner h3 {
+            color: var(--telus-red);
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-banner p {
+            color: var(--telus-gray);
+            font-size: 14px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--telus-white);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: var(--telus-light-purple);
+            padding: 18px 22px;
+            border-bottom: 1px solid #E8E4ED;
+        }
+        
+        .card-header h2 {
+            font-size: 16px;
+            color: var(--telus-purple);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header .icon {
+            width: 24px;
+            height: 24px;
+            background: var(--telus-purple);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .card-body {
+            padding: 22px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: var(--telus-gray);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 13px;
+            color: #2A2C2E;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .info-value.mismatch {
+            color: var(--telus-red);
+        }
+        
+        .info-value.aligned {
+            color: var(--telus-dark-green);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-high {
+            background: #FDE8EA;
+            color: var(--telus-red);
+        }
+        
+        .badge-medium {
+            background: #FFF4E0;
+            color: #B78103;
+        }
+        
+        .badge-low {
+            background: #E8F5E9;
+            color: var(--telus-dark-green);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .line-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .line-items-table th {
+            background: var(--telus-light-purple);
+            color: var(--telus-purple);
+            font-weight: 600;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 2px solid var(--telus-purple);
+        }
+        
+        .line-items-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .line-items-table tr:hover {
+            background: #FAFAFA;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: var(--telus-purple);
+        }
+        
+        .executive-summary {
+            background: var(--telus-white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        
+        .executive-summary h2 {
+            color: var(--telus-purple);
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--telus-green);
+        }
+        
+        .exec-paragraph {
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .exec-paragraph:last-child {
+            margin-bottom: 0;
+        }
+        
+        .risk-section {
+            background: #FDE8EA;
+            border: 1px solid #F5C6CB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .risk-section h4 {
+            color: var(--telus-red);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .risk-list {
+            list-style: none;
+        }
+        
+        .risk-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .risk-list li::before {
+            content: '⚠';
+            position: absolute;
+            left: 0;
+            color: var(--telus-red);
+        }
+        
+        .footer {
+            background: var(--telus-purple);
+            color: var(--telus-white);
+            padding: 25px 40px;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .footer-logo span {
+            color: var(--telus-green);
+        }
+        
+        .clause-box {
+            background: #FAFAFA;
+            border-left: 3px solid var(--telus-green);
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .clause-box .source {
+            display: block;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #999;
+            font-style: normal;
+        }
+        
+        .amendment-notice {
+            background: #E3F2FD;
+            border-left: 5px solid #2196F3;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .amendment-notice h4 {
+            color: #1565C0;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .amendment-notice p {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        @media print {
+            .card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="telus-logo">TELUS <span>AGRICULTURE & CONSUMER GOODS</span></div>
+            <h1 class="report-title">Contract Analysis Report</h1>
+            <p class="report-subtitle">Multi-Stakeholder Contract Analysis | Version 4.2 | February 18, 2026</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Amendment Notice -->
+        <div class="amendment-notice">
+            <h4>📎 Amendment Document</h4>
+            <p>This document is <strong>Amendment #2</strong> to Statement of Work 105, incorporating the Master Subscription and Services Agreement dated May 30, 2019.</p>
+        </div>
+
+        <!-- Risk Alert Banner -->
+        <div class="status-banner high-risk">
+            <h3>⚠ HIGH PRIORITY: Entity Misalignment Detected</h3>
+            <p>The contracting entity "TKXS, LLC" does not align with current TAC Contracting Entity Guidance. Tax and Legal engagement is required for entity alignment review.</p>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="executive-summary">
+            <h2>📋 Executive Summary</h2>
+            <p class="exec-paragraph"><strong>Deal Overview:</strong> This Amendment #2 to SOW 105 between TKXS, LLC and BASF Corporation extends the term of SalesX Customer Experience Support through February 4, 2022. The agreement renews a dedicated team of two Client Experience Specialists and expands the scope to include portal administration and LMX troubleshooting. The effective date is January 22, 2021.</p>
+            
+            <p class="exec-paragraph"><strong>Financial Mechanics:</strong> The total contract value for the extended term is $334,956, billed monthly at $27,913. Fees cover Program/Systems Management ($20,000), Dedicated Support ($309,706), and Technology Licenses ($5,250). Out-of-pocket expenses are treated as pass-through costs. The agreement notes a potential 5% discount for future multi-year commitments in years 2 and 3.</p>
+            
+            <p class="exec-paragraph"><strong>Delivery and Risk:</strong> Services are provided Monday through Friday, 8 am – 5 pm EST. The scope includes Tier 1 and Tier 2 support, with provisions for additional value-added work like FAQ writing during non-peak times. Operational risks include potential cost increases if call volumes exceed 2020-2021 levels, which would require a Change Management Order.</p>
+            
+            <p class="exec-paragraph"><strong>Strategic Verdict:</strong> The contracting entity TKXS, LLC does not align with the standard TAC Contracting Entity Guidance tables, triggering a high-risk flag for entity misalignment. Renewal requires a 90-day written notice from BASF. The deal structure relies on the Master Subscription and Services Agreement dated May 30, 2019.</p>
+        </div>
+
+        <div class="grid">
+            <!-- Document Validity -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📄</span> Document Execution & Validity</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Document Type</span>
+                        <span class="info-value">Amendment #2 to SOW 105</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Execution Status</span>
+                        <span class="info-value aligned">Signed</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Effective Date</span>
+                        <span class="info-value">January 22, 2021</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">End Date</span>
+                        <span class="info-value">February 4, 2022</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Signature Blocks</span>
+                        <span class="info-value aligned">Present</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Master Agreement</span>
+                        <span class="info-value">May 30, 2019</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Alignment -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🏢</span> Entity & Jurisdictional Alignment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Contracting Entity (Current)</span>
+                        <span class="info-value">TKXS, LLC</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Entity Jurisdiction</span>
+                        <span class="info-value">North Carolina</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer Entity</span>
+                        <span class="info-value">BASF Corporation</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer Jurisdiction</span>
+                        <span class="info-value">Delaware</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Alignment Status</span>
+                        <span class="info-value mismatch">⚠ MISMATCH</span>
+                    </div>
+                    <div class="clause-box">
+                        "between TKXS, LLC, a North Carolina limited liability company... and BASF Corporation, a Delaware corporation"
+                        <span class="source">Source: Preamble</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">💰</span> Financial Summary</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Total Contract Value</span>
+                        <span class="info-value price">$334,956</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monthly Billing</span>
+                        <span class="info-value price">$27,913</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Program/Systems Management</span>
+                        <span class="info-value">$20,000</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Dedicated Support (2 Specialists)</span>
+                        <span class="info-value">$309,706</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Technology Licenses</span>
+                        <span class="info-value">$5,250/year</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Multi-Year Discount</span>
+                        <span class="info-value aligned">5% (Years 2-3)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Terms -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📅</span> Billing & Payment Terms</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Billing Frequency</span>
+                        <span class="info-value">Monthly</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monthly Amount</span>
+                        <span class="info-value price">$27,913</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Pass-Through Expenses</span>
+                        <span class="info-value">Travel, third-party data</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Expense Approval</span>
+                        <span class="info-value">BASF approval required</span>
+                    </div>
+                    <div class="clause-box">
+                        "Out-of-pocket expenses, such as travel and third-party data purchases are not included. These will be invoiced as a pass-through, upon BASF approval."
+                        <span class="source">Source: Section 4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Services -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🔧</span> Professional Services</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Dedicated Specialists</span>
+                        <span class="info-value">2 Client Experience Specialists</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Support Hours</span>
+                        <span class="info-value">Monday – Friday, 8am – 5pm EST</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Training Included</span>
+                        <span class="info-value">New user orientation for CX Tools</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Value-Added Work</span>
+                        <span class="info-value">FAQ writing during non-peak times</span>
+                    </div>
+                    <div class="clause-box">
+                        "BASF will renew a dedicated team of two (2) Client Experience Specialists and the existing services for another 12-month term"
+                        <span class="source">Source: Section 2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">⚠</span> Risk Assessment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">System Readiness Risk</span>
+                        <span class="info-value"><span class="badge badge-high">HIGH</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Renewal Risk Level</span>
+                        <span class="info-value"><span class="badge badge-medium">MEDIUM</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sanctions Involved</span>
+                        <span class="info-value aligned">No</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Multi-Country/Cross-Border</span>
+                        <span class="info-value aligned">No</span>
+                    </div>
+                    
+                    <div class="risk-section">
+                        <h4>Active Risk Flags</h4>
+                        <ul class="risk-list">
+                            <li>Entity Misalignment – High Risk – Engage Tax and Legal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">📊</span> Line Items & SKU Mapping</h2>
+            </div>
+            <div class="card-body">
+                <table class="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>Product/Service</th>
+                            <th>Quantity/Details</th>
+                            <th>Total Value</th>
+                            <th>Billing</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Program/Systems Management and Reporting</strong></td>
+                            <td>Management & Reporting Services</td>
+                            <td class="price">$20,000</td>
+                            <td>Included in monthly</td>
+                            <td>Net Revenue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dedicated Support and Talent Management</strong><br><small>(2) Dedicated Customer Experience Specialists</small></td>
+                            <td>2 CX Specialists</td>
+                            <td class="price">$309,706</td>
+                            <td>Included in monthly</td>
+                            <td>Net Revenue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Technology Licenses: Case Management & Telephony</strong><br><small>Available as annual licenses only</small></td>
+                            <td>Case Management & Telephony</td>
+                            <td class="price">$5,250/year</td>
+                            <td>Annual</td>
+                            <td>Net Revenue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Out-of-Pocket Expenses</strong><br><small>Travel, third-party data purchases</small></td>
+                            <td>As incurred (BASF approval)</td>
+                            <td>Variable</td>
+                            <td>Pass-through</td>
+                            <td>Pass-Through Cost</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scope of Services -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">🎯</span> Scope of Services</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Core Services</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Supporting Tier1 SalesX and other related SalesX issues for end users</li>
+                            <li style="color: #333;">Entering tickets for Tier 2 support</li>
+                            <li style="color: #333;">Collaborating with CX BASF Employee/Partner Users on triage and escalation</li>
+                            <li style="color: #333;">Supporting end user platforms for P&SS as outlined in Amendment #1</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Additional Scope</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">End User / Customer Portal support</li>
+                            <li style="color: #333;">Partner Portal support</li>
+                            <li style="color: #333;">LMX troubleshooting</li>
+                            <li style="color: #333;">New user orientation/training for sales reps for CX Tools</li>
+                            <li style="color: #333;">FAQ writing during non-peak times</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Required Actions -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><span class="icon">✓</span> Required Actions</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid" style="margin: 0;">
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Immediate Actions</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">Engage Tax and Legal to review entity alignment for TKXS, LLC</li>
+                            <li style="color: #333;">Document entity mismatch in contract file for future reference</li>
+                            <li style="color: #333;">Review Master Subscription and Services Agreement (May 30, 2019) for governing terms</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--telus-purple); margin-bottom: 15px; font-size: 14px;">Renewal Considerations</h4>
+                        <ul class="risk-list">
+                            <li style="color: #333;">BASF must provide 90-day written notice of renewal intent</li>
+                            <li style="color: #333;">5% discount available for multi-year commitment (Years 2-3)</li>
+                            <li style="color: #333;">Monitor call volumes - increases above 2020-2021 levels require Change Management Order</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">TELUS <span>AGRICULTURE & CONSUMER GOODS</span></div>
+            <div>Confidential - Internal Use Only | Contract Analysis v4.2</div>
+        </div>
+    </footer>
+</body>
+</html>

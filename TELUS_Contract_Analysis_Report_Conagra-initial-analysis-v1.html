@@ -1,0 +1,1409 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TELUS Contract Analysis - Conagra US Implementation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --telus-purple: #4B286D;
+            --telus-green: #57B847;
+            --telus-light-purple: #6B3E8C;
+            --telus-dark-purple: #3A1F54;
+            --telus-light-green: #7BC67A;
+            --white: #FFFFFF;
+            --gray-50: #F7F7F8;
+            --gray-100: #E8E8EB;
+            --gray-200: #D0D0D5;
+            --gray-300: #B8B8BF;
+            --gray-400: #A0A0A9;
+            --gray-500: #888893;
+            --gray-600: #70707A;
+            --gray-700: #585860;
+            --gray-800: #404047;
+            --gray-900: #28282D;
+            --success: #2D8A3E;
+            --warning: #E8A838;
+            --danger: #D93A3A;
+            --info: #2B7DE1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--telus-purple) 0%, var(--telus-dark-purple) 100%);
+            color: var(--white);
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px rgba(75, 40, 109, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .telus-logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .telus-logo span {
+            color: var(--telus-green);
+        }
+
+        .report-title {
+            border-left: 3px solid var(--telus-green);
+            padding-left: 1.5rem;
+        }
+
+        .report-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .report-title p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .header-meta {
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: var(--telus-green);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-id {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            color: var(--telus-purple);
+            background: var(--gray-50);
+        }
+
+        .nav-tab.active {
+            color: var(--telus-purple);
+            border-bottom-color: var(--telus-purple);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 1px solid var(--gray-100);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--telus-purple);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header h2 .icon {
+            width: 28px;
+            height: 28px;
+            background: var(--telus-purple);
+            color: var(--white);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Info Items */
+        .info-item {
+            margin-bottom: 1rem;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+        .info-value.highlight {
+            color: var(--telus-purple);
+            font-weight: 600;
+        }
+
+        .info-value.large {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Status Indicators */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+
+        .status.warning {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status.danger {
+            background: #FFEBEE;
+            color: var(--danger);
+        }
+
+        .status.info {
+            background: #E3F2FD;
+            color: var(--info);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status.success .status-dot { background: var(--success); }
+        .status.warning .status-dot { background: #E65100; }
+        .status.danger .status-dot { background: var(--danger); }
+        .status.info .status-dot { background: var(--info); }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            background: var(--gray-50);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .data-table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        /* Milestone Timeline */
+        .milestone-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .milestone-timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gray-200);
+        }
+
+        .milestone {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .milestone:last-child {
+            padding-bottom: 0;
+        }
+
+        .milestone::before {
+            content: '';
+            position: absolute;
+            left: -1.6rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: var(--telus-green);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            box-shadow: 0 0 0 2px var(--telus-green);
+        }
+
+        .milestone-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .milestone-desc {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .milestone-value {
+            font-size: 0.9rem;
+            color: var(--telus-purple);
+            font-weight: 600;
+        }
+
+        /* Clause Box */
+        .clause-box {
+            background: var(--gray-50);
+            border-left: 4px solid var(--telus-purple);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .clause-box .clause-text {
+            font-style: italic;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .clause-box .clause-ref {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Risk Flags */
+        .risk-flag {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: #FFEBEE;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #FFCDD2;
+        }
+
+        .risk-flag-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--danger);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .risk-flag-content h4 {
+            font-size: 0.95rem;
+            color: var(--danger);
+            margin-bottom: 0.25rem;
+        }
+
+        .risk-flag-content p {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            background: linear-gradient(135deg, var(--telus-purple) 0%, var(--telus-dark-purple) 100%);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .exec-summary h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .exec-paragraph {
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .exec-paragraph:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Metrics Cards */
+        .metric-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--gray-100);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--telus-purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .metric-sublabel {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-top: 0.25rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-800);
+            color: var(--gray-300);
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 3rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo span {
+            color: var(--telus-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .report-title {
+                border-left: none;
+                border-top: 3px solid var(--telus-green);
+                padding-left: 0;
+                padding-top: 1rem;
+            }
+
+            .header-meta {
+                text-align: center;
+            }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-content {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav-tabs {
+                display: none;
+            }
+
+            .tab-content {
+                display: block !important;
+            }
+
+            .card {
+                break-inside: avoid;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Download Button */
+        .download-btn {
+            background: var(--telus-green);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: #45a038;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(87, 184, 71, 0.3);
+        }
+
+        /* Line Items Table Special */
+        .line-item-total {
+            background: var(--gray-50);
+            font-weight: 600;
+        }
+
+        .line-item-total td {
+            border-top: 2px solid var(--gray-300);
+        }
+
+        /* Evidence Tag */
+        .evidence-tag {
+            display: inline-block;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+            margin: 2rem 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+
+    <script>
+      
+      const files = {
+        
+      }
+    
+
+
+      window.fs = {}
+      window.fs.readFile = (fileName) => {
+        // return array buffer
+        return new Promise((resolve) => {
+          const content = files[fileName]
+          const decoded = atob(content)
+          const arr = new Uint8Array(decoded.length)
+          for (let i = 0; i < decoded.length; i++) {
+            arr[i] = decoded.charCodeAt(i)
+          }
+          resolve(arr)
+        })
+      }
+
+      // stub out window.user.get, window.db.get and window.db.set so that it works when you download the html doc
+      window.db = {}
+      window.db.get = (key) => {
+        // use localStorage to store the artifact
+        const value = localStorage.getItem(key)
+        if (value) {
+          return JSON.parse(value)
+        }
+
+        return null
+      }
+
+      window.db.set = (key, value) => {
+        // use localStorage to store the artifact
+        localStorage.setItem(key, JSON.stringify(value))
+      }
+
+      window.user = {}
+      window.user.get = () => {
+        return {
+          userId: "user-id-placeholder",
+          email: "placeholder@test.com"
+        }
+      }
+
+    </script>
+    </head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="telus-logo">TELUS<span>.</span></div>
+                <div class="report-title">
+                    <h1>Contract Analysis Report</h1>
+                    <p>Conagra US Implementation SOW</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <span class="status-badge">✓ ANALYSIS COMPLETE</span>
+                <div class="doc-id">TACOPP-000002054 | v4.2</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+        <div class="nav-content">
+            <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="showTab('execution')">Execution & Validity</button>
+            <button class="nav-tab" onclick="showTab('commercial')">Commercial</button>
+            <button class="nav-tab" onclick="showTab('billing')">Billing & Cash Flow</button>
+            <button class="nav-tab" onclick="showTab('services')">Services & Support</button>
+            <button class="nav-tab" onclick="showTab('guardrails')">Guardrails</button>
+            <button class="nav-tab" onclick="showTab('phases')">Phase Reports</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active fade-in">
+            <!-- Executive Summary -->
+            <div class="exec-summary">
+                <h2>📋 Executive Summary</h2>
+                <p class="exec-paragraph">
+                    This Statement of Work outlines a $698,000 fixed-fee engagement between TELUS Agriculture & Consumer Goods (US) Inc. and Conagra Brands, Inc. to integrate TELUS TPM Enterprise with SAP S/4HANA for Conagra's US business unit. The project runs from a March 2026 kickoff through Hypercare completion on June 30, 2027, with a blackout period in early 2027. The agreement relies on a master agreement (MSSA) dated July 1, 2009.
+                </p>
+                <p class="exec-paragraph">
+                    The total contract value is $698,000, billed across six defined milestones including Test Environment Build (10%), Unit Testing (20%), Test Program Load (15%), UAT Sign Off (30%), Cutover & Go Live (15%), and Hypercare Completion (10%). Invoicing occurs upon written customer acceptance of each milestone. Additional support during the Memorial Day 2027 cutover weekend is billable on a Time & Materials basis at rates of $300-$450 per hour.
+                </p>
+                <p class="exec-paragraph">
+                    Scope is strictly limited to the US market, with Canada explicitly excluded. Technical delivery includes pricing, contract management workflows, and analytics, alongside specific integrations with SAP S/4HANA and Tibersoft. TELUS is responsible for train-the-trainer sessions, while the customer retains responsibility for end-user training and UAT execution. A blackout period is scheduled for January and February 2027 where project work pauses.
+                </p>
+                <p class="exec-paragraph">
+                    The deal represents a significant implementation project within the Consumer Goods vertical, reinforcing the customer's reliance on TELUS solutions for trade promotion management. The explicit exclusion of Canada and specific functional areas suggests clear boundaries for the current engagement while highlighting potential future expansion opportunities. Operational alignment appears robust with defined governance, though the reliance on a 2009 master agreement suggests a long-standing relationship.
+                </p>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="grid-4">
+                <div class="metric-card">
+                    <div class="metric-value">$698K</div>
+                    <div class="metric-label">Total Contract Value</div>
+                    <div class="metric-sublabel">Fixed Fee</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">6</div>
+                    <div class="metric-label">Milestones</div>
+                    <div class="metric-sublabel">Milestone-Based Billing</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">17</div>
+                    <div class="metric-label">Months Duration</div>
+                    <div class="metric-sublabel">Mar 2026 - Jun 2027</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" style="color: var(--success);">✓</div>
+                    <div class="metric-label">Entity Aligned</div>
+                    <div class="metric-sublabel">Consumer Goods US</div>
+                </div>
+            </div>
+
+            <!-- Deal Status Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📊</span> Cross-Functional Deal Status Summary</h2>
+                    <span class="status success"><span class="status-dot"></span> Low Risk</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-2">
+                        <div>
+                            <div class="info-item">
+                                <div class="info-label">Commercial Snapshot</div>
+                                <div class="info-value">Fixed Fee SOW for $698,000 covering implementation of TELUS TPM Enterprise integrated with SAP S/4HANA for US business unit. Includes milestones for environment build, testing, go-live, and hypercare.</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Entity Alignment</div>
+                                <div class="info-value highlight">Aligned</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Multi-Country/Cross-Border</div>
+                                <div class="info-value">No</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-item">
+                                <div class="info-label">System Readiness Risk</div>
+                                <div class="info-value"><span class="status success"><span class="status-dot"></span> Low</span></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Sanctions Involved</div>
+                                <div class="info-value">No</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Required Actions</div>
+                                <div class="info-value">None identified</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contract Hierarchy -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🏛️</span> Contract Hierarchy</h2>
+                </div>
+                <div class="card-body">
+                    <div class="milestone-timeline">
+                        <div class="milestone">
+                            <div class="milestone-title">Master Agreement (MSSA)</div>
+                            <div class="milestone-desc">Software Subscription and Hosting Services Agreement</div>
+                            <div class="milestone-value">Effective: July 1, 2009</div>
+                        </div>
+                        <div class="milestone">
+                            <div class="milestone-title">Statement of Work (SOW)</div>
+                            <div class="milestone-desc">Conagra US Implementation - SAP S/4HANA Integration</div>
+                            <div class="milestone-value">Effective: January 15, 2026 | End: June 30, 2027</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Flags -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🚩</span> Risk Flags</h2>
+                </div>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✓</div>
+                        <p>No risk flags triggered for this contract.</p>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Entity alignment confirmed. No sanctions jurisdictions involved. No withholding tax risks identified.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Execution & Validity Tab -->
+        <div id="execution" class="tab-content fade-in">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">📄</span> Document Execution</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label">Document Type</div>
+                            <div class="info-value highlight">Statement of Work (SOW)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Execution Status</div>
+                            <div class="info-value"><span class="status success"><span class="status-dot"></span> Signed</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Signature Blocks Present</div>
+                            <div class="info-value">Yes</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Effective Date</div>
+                            <div class="info-value highlight">January 15, 2026</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Document Reference</div>
+                            <div class="info-value">TACOPP-000002054</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">🏢</span> Entity & Jurisdictional Alignment</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label">Line of Business</div>
+                            <div class="info-value highlight">Consumer Goods</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">TELUS Contracting Entity</div>
+                            <div class="info-value">TELUS Agriculture & Consumer Goods (US) Inc.</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Customer Legal Entity</div>
+                            <div class="info-value">Conagra Brands, Inc.</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Entity Alignment Status</div>
+                            <div class="info-value"><span class="status success"><span class="status-dot"></span> Aligned</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Signatory Outside Operating Jurisdiction</div>
+                            <div class="info-value">No</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📎</span> External Agreement Reliance</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Relies on External Agreement</div>
+                        <div class="info-value highlight">Yes</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">External Agreement Name</div>
+                        <div class="info-value">Software Subscription and Hosting Services Agreement (MSSA)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">External Agreement Effective Date</div>
+                        <div class="info-value">July 1, 2009</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📝</span> Evidence & Source References</h2>
+                </div>
+                <div class="card-body">
+                    <div class="clause-box">
+                        <div class="clause-text">"This Statement of Work is entered into effective as of the last date of signature between both parties"</div>
+                        <div class="clause-ref">Source: Page 1, Preamble | Execution Clause</div>
+                    </div>
+                    <div class="clause-box">
+                        <div class="clause-text">"TELUS Agriculture & Consumer Goods (US), Inc. ... Beth Gillis VP, Consumer Goods 1/15/2026 ... Customer: Conagra Brands, Inc. ... Chad Meyer Manager Procurement 1/15/2026"</div>
+                        <div class="clause-ref">Source: Page 7, Signature Block | Signature Block Text</div>
+                    </div>
+                    <div class="clause-box">
+                        <div class="clause-text">"Conagra Brands, Inc.("Customer") and TELUS Agriculture & Consumer Goods (US) Inc. (Company" or "Company Affiliate")"</div>
+                        <div class="clause-ref">Source: Page 1, Preamble | Parties Text</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commercial Tab -->
+        <div id="commercial" class="tab-content fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">💰</span> Line Items & SKU Mapping</h2>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product/Service</th>
+                                <th>SKU</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>TCV</th>
+                                <th>Revenue Type</th>
+                                <th>Billing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Project Completion Amount (Fixed Fee)</strong></td>
+                                <td><span class="evidence-tag">Not Found</span></td>
+                                <td>1</td>
+                                <td>$698,000</td>
+                                <td><strong>$698,000</strong></td>
+                                <td><span class="status success"><span class="status-dot"></span> Net Revenue</span></td>
+                                <td>Milestone-Based</td>
+                            </tr>
+                            <tr>
+                                <td>Support Time - Cutover dates: 8am – 5pm</td>
+                                <td><span class="evidence-tag">Not Found</span></td>
+                                <td>-</td>
+                                <td>$300/hour</td>
+                                <td>T&M</td>
+                                <td><span class="status success"><span class="status-dot"></span> Net Revenue</span></td>
+                                <td>Time & Materials</td>
+                            </tr>
+                            <tr>
+                                <td>Support Time - Cutover dates: 12am – 8am & 5pm – 12am</td>
+                                <td><span class="evidence-tag">Not Found</span></td>
+                                <td>-</td>
+                                <td>$450/hour</td>
+                                <td>T&M</td>
+                                <td><span class="status success"><span class="status-dot"></span> Net Revenue</span></td>
+                                <td>Time & Materials</td>
+                            </tr>
+                            <tr class="line-item-total">
+                                <td colspan="4"><strong>Total Contract Value</strong></td>
+                                <td><strong>$698,000</strong></td>
+                                <td colspan="2">Fixed Fee + T&M Options</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🎯</span> Milestone Breakdown</h2>
+                </div>
+                <div class="card-body">
+                    <div class="grid-2">
+                        <div>
+                            <div class="milestone-timeline">
+                                <div class="milestone">
+                                    <div class="milestone-title">Milestone 1: Test Environment Creation & Build</div>
+                                    <div class="milestone-desc">Environment setup and initial configuration</div>
+                                    <div class="milestone-value">10% ($69,800)</div>
+                                </div>
+                                <div class="milestone">
+                                    <div class="milestone-title">Milestone 2: Unit Testing Completion</div>
+                                    <div class="milestone-desc">Completion of unit testing phase</div>
+                                    <div class="milestone-value">20% ($139,600)</div>
+                                </div>
+                                <div class="milestone">
+                                    <div class="milestone-title">Milestone 3: Test Program Load</div>
+                                    <div class="milestone-desc">Test program loaded and validated</div>
+                                    <div class="milestone-value">15% ($104,700)</div>
+                                </div>
+                                <div class="milestone">
+                                    <div class="milestone-title">Milestone 4: UAT Sign Off</div>
+                                    <div class="milestone-desc">User Acceptance Testing completed and signed</div>
+                                    <div class="milestone-value">30% ($209,400)</div>
+                                </div>
+                                <div class="milestone">
+                                    <div class="milestone-title">Milestone 5: Cutover & Go Live</div>
+                                    <div class="milestone-desc">Production deployment and go-live</div>
+                                    <div class="milestone-value">15% ($104,700)</div>
+                                </div>
+                                <div class="milestone">
+                                    <div class="milestone-title">Milestone 6: Completion of Hypercare (US)</div>
+                                    <div class="milestone-desc">Hypercare support period completed</div>
+                                    <div class="milestone-value">10% ($69,800)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="chart-container">
+                                <canvas id="milestoneChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📋</span> Evidence</h2>
+                </div>
+                <div class="card-body">
+                    <div class="clause-box">
+                        <div class="clause-text">"The project, as outlined in this SOW, will be completed for a fixed fee of $698,000."</div>
+                        <div class="clause-ref">Source: Page 6, Section 4.A | Fixed Fee Clause</div>
+                    </div>
+                    <div class="clause-box">
+                        <div class="clause-text">"Cutover dates: 8am – 5pm $300/hour* ... Cutover dates: 12am – 8am & 5pm – 12am $450/hour*"</div>
+                        <div class="clause-ref">Source: Page 5, Section 3 | Out of Scope Rates</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing & Cash Flow Tab -->
+        <div id="billing" class="tab-content fade-in">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">💳</span> Billing Structure</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label">Billing Frequency</div>
+                            <div class="info-value highlight">Milestone-Based</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Billing Timing</div>
+                            <div class="info-value">On completion of each milestone</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Billing Triggers</div>
+                            <div class="info-value">Customer accepts the milestone deliverable in writing</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Payment Terms</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span> (Refer to MSSA)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Late Fees</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span> (Refer to MSSA)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Payment Hold Conditions</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">🧾</span> Tax & Invoicing</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label">Tax Treatment</div>
+                            <div class="info-value">All prices are tax exclusive.</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Taxes and Withholding</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Invoicing Method</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📜</span> Billing Evidence</h2>
+                </div>
+                <div class="card-body">
+                    <div class="clause-box">
+                        <div class="clause-text">"TELUS shall invoice the Customer on completion of each milestone (based on ID), as stipulated above, only once Customer accepts the milestone deliverable in writing."</div>
+                        <div class="clause-ref">Source: Page 6, Section 4.B | Billing Terms</div>
+                    </div>
+                    <div class="clause-box">
+                        <div class="clause-text">"All prices are tax exclusive."</div>
+                        <div class="clause-ref">Source: Page 6, Section 4.B | Tax Treatment</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📊</span> Cash Flow Projection</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="cashFlowChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services & Support Tab -->
+        <div id="services" class="tab-content fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🔧</span> Professional Services Scope</h2>
+                </div>
+                <div class="card-body">
+                    <div class="clause-box">
+                        <div class="clause-text">"The project encompasses the delivery phase for Conagra's business unit in the US as detailed in this SOW, to integrate SAP S/4HANA with TELUS TPM Enterprise. This project only encompasses the build and deployment of the following key functional areas: Pricing... Distributor and Operator Contract Management... Business Processes... Analytics"</div>
+                        <div class="clause-ref">Source: Page 2, Section 1 | Scope Definition</div>
+                    </div>
+                    
+                    <div class="section-divider"></div>
+                    
+                    <h3 style="color: var(--telus-purple); margin-bottom: 1rem; font-size: 1rem;">Key Functional Areas</h3>
+                    <div class="grid-2">
+                        <div class="info-item">
+                            <div class="info-label">Pricing</div>
+                            <div class="info-value">SAP S/4HANA pricing integration with TELUS TPM Enterprise</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Contract Management</div>
+                            <div class="info-value">Distributor and Operator Contract Management workflows</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Business Processes</div>
+                            <div class="info-value">OI Integration, Rebate/Contract Integration</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Analytics</div>
+                            <div class="info-value">Reporting and analytics capabilities</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">🎓</span> Training</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="clause-box">
+                            <div class="clause-text">"TELUS will provide train-the-trainer training to train Customer super users... Training to end users will be the responsibility of the Customer."</div>
+                            <div class="clause-ref">Source: Page 4, Scope Assumptions</div>
+                        </div>
+                        <div class="info-item" style="margin-top: 1rem;">
+                            <div class="info-label">TELUS Responsibility</div>
+                            <div class="info-value">Train-the-trainer sessions for super users</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Customer Responsibility</div>
+                            <div class="info-value">End user training</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">🛟</span> Support Model</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="clause-box">
+                            <div class="clause-text">"Following the completion of Go-Live Hypercare, the TELUS project team will transition Solution support to both the TELUS Support team."</div>
+                            <div class="clause-ref">Source: Page 7, Milestone 6</div>
+                        </div>
+                        <div class="info-item" style="margin-top: 1rem;">
+                            <div class="info-label">Support Transition</div>
+                            <div class="info-value">Project team → TELUS Support team after Hypercare</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">⚡</span> SLAs & Performance</h2>
+                </div>
+                <div class="card-body">
+                    <div class="clause-box">
+                        <div class="clause-text">"TELUS shall ensure that the solution performs at least at parity with the existing Blacksmith system."</div>
+                        <div class="clause-ref">Source: Page 4, Scope Assumptions</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">💵</span> Out of Scope Rates</h2>
+                </div>
+                <div class="card-body">
+                    <div class="clause-box">
+                        <div class="clause-text">"If Customer requires resources over their S/4 cutover weekend planned for May 29-31, 2027 (Memorial Day), this will be billed Time & Materials using the following rate card: $300/hour*... $450/hour*"</div>
+                        <div class="clause-ref">Source: Page 5, Section 3</div>
+                    </div>
+                    <table class="data-table" style="margin-top: 1rem;">
+                        <thead>
+                            <tr>
+                                <th>Time Period</th>
+                                <th>Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>8am – 5pm (Business Hours)</td>
+                                <td>$300/hour</td>
+                            </tr>
+                            <tr>
+                                <td>12am – 8am & 5pm – 12am (After Hours)</td>
+                                <td>$450/hour</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guardrails Tab -->
+        <div id="guardrails" class="tab-content fade-in">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">⚖️</span> Standard Terms</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label">Auto-Renewal</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Price Uplift</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Termination</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span> (Refer to MSSA)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Liability Caps</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span> (Refer to MSSA)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Indemnification</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span> (Refer to MSSA)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span class="icon">🔒</span> Data Rights</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label">Ownership</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Permitted Uses</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Prohibited Uses</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Retention</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Deletion</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Consent</div>
+                            <div class="info-value"><span class="evidence-tag">Not Found</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🌍</span> EU Withholding Tax Assessment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Licensing or Royalties Present</div>
+                        <div class="info-value">No</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Countries Detected</div>
+                        <div class="info-value">None (US-only scope)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Withholding Tax Risk</div>
+                        <div class="info-value"><span class="status success"><span class="status-dot"></span> No Risk Identified</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📝</span> Note on Guardrails</h2>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--gray-600);">
+                        Standard terms, liability caps, indemnification, and data rights are not explicitly defined in this Statement of Work. 
+                        These provisions are governed by the Master Software Subscription and Hosting Services Agreement (MSSA) dated July 1, 2009. 
+                        Please refer to the MSSA for complete terms and conditions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase Reports Tab -->
+        <div id="phases" class="tab-content fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🚀</span> Phase 3: Customer Success & PS Handoff</h2>
+                </div>
+                <div class="card-body">
+                    <div class="grid-2">
+                        <div class="info-item">
+                            <div class="info-label">Onboarding Deliverables</div>
+                            <div class="info-value">Test Environment Creation & Build, Unit Testing Completion, Test Program Load, UAT Sign Off, Cutover & Go Live, Completion of Hypercare (US)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Training Entitlements</div>
+                            <div class="info-value">Train-the-trainer format for super users; End user training is Customer responsibility.</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Support Model</div>
+                            <div class="

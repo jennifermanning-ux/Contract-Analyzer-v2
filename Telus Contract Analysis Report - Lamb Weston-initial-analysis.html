@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TELUS Contract Analysis - Lamb Weston Order Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .telus-purple { color: #4B286D; }
+        .telus-green { color: #66CC00; }
+        .bg-telus-purple { background-color: #4B286D; }
+        .bg-telus-green { background-color: #66CC00; }
+        .border-telus-purple { border-color: #4B286D; }
+        .border-telus-green { border-color: #66CC00; }
+        .hover-telus-purple:hover { background-color: #3a1f54; }
+        .gradient-telus {
+            background: linear-gradient(135deg, #4B286D 0%, #6B3D8C 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status-success {
+            background-color: #DEF7E5;
+            color: #1F7A2E;
+        }
+        .status-warning {
+            background-color: #FFF4E5;
+            color: #B35900;
+        }
+        .status-info {
+            background-color: #E5F3FF;
+            color: #0066CC;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #4B286D 0%, #66CC00 100%);
+            border-radius: 2px;
+        }
+    </style>
+
+    <script>
+      
+      const files = {
+        
+      }
+    
+
+
+      window.fs = {}
+      window.fs.readFile = (fileName) => {
+        // return array buffer
+        return new Promise((resolve) => {
+          const content = files[fileName]
+          const decoded = atob(content)
+          const arr = new Uint8Array(decoded.length)
+          for (let i = 0; i < decoded.length; i++) {
+            arr[i] = decoded.charCodeAt(i)
+          }
+          resolve(arr)
+        })
+      }
+
+      // stub out window.user.get, window.db.get and window.db.set so that it works when you download the html doc
+      window.db = {}
+      window.db.get = (key) => {
+        // use localStorage to store the artifact
+        const value = localStorage.getItem(key)
+        if (value) {
+          return JSON.parse(value)
+        }
+
+        return null
+      }
+
+      window.db.set = (key, value) => {
+        // use localStorage to store the artifact
+        localStorage.setItem(key, JSON.stringify(value))
+      }
+
+      window.user = {}
+      window.user.get = () => {
+        return {
+          userId: "user-id-placeholder",
+          email: "placeholder@test.com"
+        }
+      }
+
+    </script>
+    </head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="gradient-telus text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-white p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-purple-900" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">TELUS Agriculture & Consumer Goods</h1>
+                        <p class="text-purple-200 text-sm">Contract Analysis & Intelligence Platform</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-purple-200">Analysis Date</p>
+                    <p class="font-semibold" id="currentDate"></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Executive Summary Card -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-8 animate-fade-in border-l-4 border-telus-purple">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold telus-purple">Executive Summary</h2>
+                <span class="status-badge status-success">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Executed & Valid
+                </span>
+            </div>
+            <div class="section-divider mb-4"></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Contract Value (Annual)</p>
+                    <p class="text-3xl font-bold telus-purple">$69,510</p>
+                    <p class="text-sm text-gray-600">USD</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Contract Term</p>
+                    <p class="text-3xl font-bold telus-purple">12 Months</p>
+                    <p class="text-sm text-gray-600">Feb 1, 2026 - Jan 31, 2027</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Entity Alignment</p>
+                    <p class="text-3xl font-bold text-green-600">Aligned</p>
+                    <p class="text-sm text-gray-600">US Entity ✓</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contract Overview Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
+            <!-- Parties Information -->
+            <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+                <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    Contracting Parties
+                </h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <p class="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Service Provider</p>
+                        <p class="font-semibold text-gray-900">TELUS Agriculture & Consumer Goods (US), Inc.</p>
+                        <p class="text-sm text-gray-600">dba VeriSync, LLC</p>
+                        <p class="text-sm text-gray-500 mt-2">Account Manager: Mike Leiker</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <p class="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">Customer</p>
+                        <p class="font-semibold text-gray-900">Lamb Weston Sales, Inc.</p>
+                        <p class="text-sm text-gray-600">599 S Rivershore Lane</p>
+                        <p class="text-sm text-gray-600">Eagle, ID 83616</p>
+                        <p class="text-sm text-gray-500 mt-2">Contact: Jennifer.Perkins@lambweston.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Dates & Status -->
+            <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+                <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Key Dates & Timeline
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm text-gray-600">Effective Date</span>
+                        <span class="font-semibold text-gray-900">February 1, 2026</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm text-gray-600">Subscription Start</span>
+                        <span class="font-semibold text-gray-900">February 1, 2026</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm text-gray-600">Subscription End</span>
+                        <span class="font-semibold text-gray-900">January 31, 2027</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg border border-purple-200">
+                        <span class="text-sm text-purple-700">Execution Date</span>
+                        <span class="font-semibold telus-purple">February 17, 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product & Pricing Details -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-8 animate-fade-in">
+            <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                Product & Pricing Details
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product/Service</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Term</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Annual Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">TELUS TPM Professional Plus</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900">Lamb Weston Retail Division</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">12 months</div>
+                                <div class="text-xs text-gray-500">Feb 1, 2026 - Jan 31, 2027</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <div class="text-sm font-bold telus-purple">$69,510.00</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="bg-gray-50">
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-right font-semibold text-gray-900">Grand Total Annual Subscription</td>
+                            <td class="px-6 py-4 text-right font-bold text-lg telus-purple">$69,510.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Billing & Payment Terms -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+                <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    Billing & Payment
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 text-purple-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-900">Billing Frequency</p>
+                            <p class="text-sm text-gray-600">Annual - Invoiced in advance of each billing period</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-green-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-900">Payment Terms</p>
+                            <p class="text-sm text-gray-600">Per Master Agreement terms</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-900">Billing Contact</p>
+                            <p class="text-sm text-gray-600">accounts.receivable@telusagcg.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+                <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Document Hierarchy
+                </h3>
+                <div class="space-y-3">
+                    <div class="p-4 border-2 border-purple-300 rounded-lg bg-purple-50">
+                        <p class="text-xs font-semibold text-purple-600 uppercase">Primary Agreement</p>
+                        <p class="font-medium text-gray-900">Master Subscription and Services Agreement</p>
+                        <p class="text-sm text-gray-600">Dated: January 27, 2010</p>
+                    </div>
+                    <div class="flex justify-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                        </svg>
+                    </div>
+                    <div class="p-4 border-2 border-green-300 rounded-lg bg-green-50">
+                        <p class="text-xs font-semibold text-green-600 uppercase">Current Document</p>
+                        <p class="font-medium text-gray-900">Order Form</p>
+                        <p class="text-sm text-gray-600">Effective: February 1, 2026</p>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p class="text-xs text-yellow-800">
+                        <span class="font-semibold">Note:</span> In case of conflict, the Agreement shall prevail over this Order Form.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signatures & Execution -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-8 animate-fade-in">
+            <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                Execution & Signatures
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <p class="text-xs font-semibold text-gray-500 uppercase mb-2">TELUS Agriculture & Consumer Goods (US), Inc.</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Signatory:</span>
+                            <span class="text-sm font-medium text-gray-900">Mike Leiker</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Title:</span>
+                            <span class="text-sm font-medium text-gray-900">Enterprise Account Executive</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Date:</span>
+                            <span class="text-sm font-medium text-gray-900">February 17, 2026</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Lamb Weston Sales, Inc.</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Signatory:</span>
+                            <span class="text-sm font-medium text-gray-900">Jaimy Adams</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Title:</span>
+                            <span class="text-sm font-medium text-gray-900">Manager Procurement, Corporate Services</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Date:</span>
+                            <span class="text-sm font-medium text-gray-900">February 17, 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-600">
+                    <span class="font-semibold">DocuSign Envelope ID:</span> F6B6370F-6969-4ED4-9DDF-238DA02F03E8
+                </p>
+            </div>
+        </div>
+
+        <!-- Risk Assessment & Compliance -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-8 animate-fade-in">
+            <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                Risk Assessment & Compliance
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div class="flex items-center mb-2">
+                        <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-semibold text-green-800">Entity Alignment</span>
+                    </div>
+                    <p class="text-sm text-green-700">US customer contracting with US entity. Properly aligned per TAC guidance.</p>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div class="flex items-center mb-2">
+                        <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-semibold text-green-800">Execution Status</span>
+                    </div>
+                    <p class="text-sm text-green-700">Fully executed by authorized signatories from both parties on Feb 17, 2026.</p>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div class="flex items-center mb-2">
+                        <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-semibold text-green-800">Jurisdiction</span>
+                    </div>
+                    <p class="text-sm text-green-700">No cross-border complexities. Single US jurisdiction transaction.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Items -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-8 animate-fade-in">
+            <h3 class="text-lg font-bold telus-purple mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                Recommended Actions
+            </h3>
+            <div class="space-y-3">
+                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                    <input type="checkbox" class="mt-1 mr-3 h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Process initial invoice for $69,510 (Annual subscription fee)</p>
+                        <p class="text-xs text-gray-500">Due: Prior to subscription start date (Feb 1, 2026)</p>
+                    </div>
+                </div>
+                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                    <input type="checkbox" class="mt-1 mr-3 h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Schedule onboarding kickoff with Lamb Weston Retail Division</p>
+                        <p class="text-xs text-gray-500">Coordinate with Mike Leiker (Account Manager)</p>
+                    </div>
+                </div>
+                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                    <input type="checkbox" class="mt-1 mr-3 h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Verify PO requirement status with customer</p>
+                        <p class="text-xs text-gray-500">Customer indicated PO is required per Order Form</p>
+                    </div>
+                </div>
+                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                    <input type="checkbox" class="mt-1 mr-3 h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Archive executed document in contract management system</p>
+                        <p class="text-xs text-gray-500">DocuSign Envelope ID: F6B6370F-6969-4ED4-9DDF-238DA02F03E8</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-sm text-gray-500 py-6 border-t border-gray-200">
+            <p>TELUS Agriculture & Consumer Goods | Contract Analysis Report</p>
+            <p class="mt-1">Confidential - Internal Use Only</p>
+            <p class="mt-1 text-xs">Generated on <span id="footerDate"></span></p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Set current date
+        const now = new Date();
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+        document.getElementById('footerDate').textContent = now.toLocaleDateString('en-US', { ...dateOptions, hour: '2-digit', minute: '2-digit' });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
